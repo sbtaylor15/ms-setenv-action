@@ -1,0 +1,63 @@
+name: "Setup Environment Variable"
+description: "Setup Environment Variable Re-usable Github Action"
+inputs:
+  gh_head_ref:
+    description: "GitHub Head Reference"
+    required: true
+  gh_ref_name:
+    description: "GitHub Reference Name"
+    required: true
+  gh_event_repo_name:
+    description: "GitHub Event Repository Name"
+    required: true
+  gh_sha:
+    description: "Github SHA"
+    required: true
+  gh_repository:
+    description: "Github Repository"
+    required: true
+  gh_run_number:
+    description: "Github Run Number"
+    required: true
+  BRANCH:
+    description: "Branch"
+    required: true
+  REGISTRY:
+    description: "Registery"
+    required: true
+  DHURL:
+    description: "DeployHub URL"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+      with:
+        fetch-depth: 1
+
+    - name: Export env
+      id: env
+      env:
+        DHURL: https://console.deployhub.com
+        REGISTRY: quay.io
+        BRANCH: ${{ inputs.gh_head_ref || inputs.gh_ref_name }}
+      shell: bash
+      run: |
+        BRANCH=$(echo "${{ inputs.BRANCH }}" | cut -d'/' -f1)
+        BASE_VERSION=$(curl -s "https://ortelius.github.io/${{ inputs.gh_event_repo_name }}/index.yaml" | grep version: | awk '{print $2}' | cut -f1-2 -d. | sort -u -r --version-sort | head -1)
+        SHORT_SHA=$(echo ${{ inputs.gh_sha }} | cut -c 1-6)
+        {
+          echo "dhurl=${{ inputs.DHURL }}"
+          echo "branch=${BRANCH}"
+          echo "chart_version=${BASE_VERSION}.${{ inputs.gh_run_number }}"
+          echo "compname=${{ inputs.gh_event_repo_name }}"
+          echo "image_repo_tag=${{ inputs.REGISTRY }}/${{ inputs.gh_repository }}:${BRANCH}-v${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
+          echo "image_repository=${{ inputs.REGISTRY }}/${{ inputs.gh_repository }}"
+          echo "image_tag=${BRANCH}-v${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
+          echo "image_version=${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
+          echo "registry=${{ inputs.REGISTRY }}"
+          echo "short_sha=${SHORT_SHA}"
+          echo "gh_handle=$GITHUB_ACTOR"
+        } >> "$GITHUB_OUTPUT"
