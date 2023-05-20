@@ -28,6 +28,42 @@ inputs:
   DHURL:
     description: "DeployHub URL"
     required: true
+
+outputs:
+  short_sha:
+    description: "Commit Short SHA"
+    value: ${{ steps.env.outputs.short_sha }}
+  chart_version:
+    description: "Chart Version"
+    value:  ${{ steps.env.outputs.chart_version }}
+  image_version:
+    description: "Image Version"
+    value: ${{ steps.env.outputs.image_version }}
+  image_tag:
+    description: "Image Tag"
+    value: ${{ steps.env.outputs.image_tag }}
+  image_repo_tag:
+    description: "Image Repository Tag"
+    value: ${{ steps.env.outputs.image_repo_tag }}
+  image_repository:
+    description: "Image Repository"
+    value: ${{ steps.env.outputs.image_repository }}
+  registry:
+    description: "Image Registry"
+    value: ${{ steps.env.outputs.registry }}
+  branch:
+    description: "GitHub Branch"
+    value: ${{ steps.env.outputs.branch }}
+  compname:
+    description: "Component Name"
+    value: ${{ steps.env.outputs.compname }}
+  dhurl:
+    description: "DeployHub URL"
+    value: ${{ steps.env.outputs.dhurl }}
+  gh_handle:
+    description: "GitHub Handle"
+    value: ${{ steps.env.outputs.gh_handle }}
+
 runs:
   using: "composite"
   steps:
