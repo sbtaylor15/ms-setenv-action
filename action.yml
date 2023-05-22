@@ -81,19 +81,19 @@ runs:
         BRANCH: ${{ inputs.gh_head_ref || inputs.gh_ref_name }}
       shell: bash
       run: |
-        BRANCH=$(echo "${{ inputs.BRANCH }}" | cut -d'/' -f1)
+        BRANCH=$(echo "${{ env.BRANCH }}" | cut -d'/' -f1)
         BASE_VERSION=$(curl -s "https://ortelius.github.io/${{ inputs.gh_event_repo_name }}/index.yaml" | grep version: | awk '{print $2}' | cut -f1-2 -d. | sort -u -r --version-sort | head -1)
         SHORT_SHA=$(echo ${{ inputs.gh_sha }} | cut -c 1-6)
         {
-          echo "dhurl=${{ inputs.DHURL }}"
+          echo "dhurl=${{ env.DHURL }}"
           echo "branch=${BRANCH}"
           echo "chart_version=${BASE_VERSION}.${{ inputs.gh_run_number }}"
           echo "compname=${{ inputs.gh_event_repo_name }}"
-          echo "image_repo_tag=${{ inputs.REGISTRY }}/${{ inputs.gh_repository }}:${BRANCH}-v${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
-          echo "image_repository=${{ inputs.REGISTRY }}/${{ inputs.gh_repository }}"
+          echo "image_repo_tag=${{ env.REGISTRY }}/${{ inputs.gh_repository }}:${BRANCH}-v${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
+          echo "image_repository=${{ env.REGISTRY }}/${{ inputs.gh_repository }}"
           echo "image_tag=${BRANCH}-v${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
           echo "image_version=${BASE_VERSION}.${{ inputs.gh_run_number }}-g${SHORT_SHA}"
-          echo "registry=${{ inputs.REGISTRY }}"
+          echo "registry=${{ env.REGISTRY }}"
           echo "short_sha=${SHORT_SHA}"
           echo "gh_handle=$GITHUB_ACTOR"
         } >> "$GITHUB_OUTPUT"
