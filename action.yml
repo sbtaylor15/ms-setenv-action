@@ -26,7 +26,7 @@ outputs:
     value: ${{ steps.env.outputs.short_sha }}
   chart_version:
     description: "Chart Version"
-    value:  ${{ steps.env.outputs.chart_version }}
+    value: ${{ steps.env.outputs.chart_version }}
   image_version:
     description: "Image Version"
     value: ${{ steps.env.outputs.image_version }}
